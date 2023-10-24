@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="DetectionLangue.Views.DetectionLangueView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                   xmlns:viewmodels="clr-namespace:DetectionLangue.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DetectionLangue.Views"
+             xmlns:converter="clr-namespace:DetectionLangue.ViewModels.Converters"
+             mc:Ignorable="d" 
+             Height="450" Width="800">
+    <UserControl.DataContext>
+        <viewmodels:DetectionLangueViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <converter:BoolToEstFiable x:Key="BoolToEstFiable"/>
+        <converter:BoolToVisibility x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
+    <Grid Background="WhiteSmoke">
+
+        <Menu Height="NaN" Margin="0,0,0,430">
+            <MenuItem Header="Configuration" Command="{Binding CmdGoToConfiguration}"/>
+        </Menu>
+        <TextBlock Text="Entrez le texte pour lequel vous détecter la langue :" Margin="10,50,514,375" Height="NaN" Width="NaN"/>
+        <TextBox Margin="10,80,400,80" Height="NaN" Width="NaN" Text="{Binding DetectTexte, Mode=TwoWay}" TextChanged="TextBox_TextChanged"/>
+        <Button Content="Détecter" Margin="33,391,423,26" Visibility="{Binding TexteExiste, Converter={StaticResource BoolToVisibility}}" Command="{Binding CmdDetecteurDetect}"/>
+
+        <TextBlock Text="Résultat de la détection :" Margin="518,54,152,378" Height="NaN" Width="NaN"/>
+        <ComboBox Margin="492,123,125,297" Height="NaN" Width="NaN" SelectedItem="fr">
+            <ComboBoxItem Tag="1">fr</ComboBoxItem>
+            <ComboBoxItem Tag="2">en</ComboBoxItem>
+            <ComboBoxItem Tag="3">es</ComboBoxItem>
+        </ComboBox>
+        <Label Content="Langue :" Target="{Binding ElementName=language}" Margin="518,183,217,231" Height="NaN" Width="NaN"/>
+        <TextBox Name="language" Margin="588,188,57,241" Height="NaN" Width="NaN" Text="{Binding Langue}"  IsReadOnly="True"/>
+        <Label Content="Confiance :" Target="{Binding ElementName=Confiance}" Margin="510,261,217,153" Height="NaN" Width="NaN"/>
+        <TextBox Name="Confiance" Margin="583,268,63,160" Height="NaN" Width="NaN" Text="{Binding Confiance}"  IsReadOnly="True" TextChanged="Confiance_TextChanged"/>
+        <Label Content="Est fiable :" Target="{Binding ElementName=EstFiable}" Margin="510,334,217,80" Height="NaN" Width="NaN"/>
+        <TextBox Name="EstFiable" Margin="583,341,63,87" Height="NaN" Width="NaN" Text="{Binding EstFiable}"  IsReadOnly="True"/>
+    </Grid>
+</UserControl>

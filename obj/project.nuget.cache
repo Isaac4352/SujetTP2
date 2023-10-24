@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zsPsh2WbRhmEp9nzDCfvbGtr/XtTFG85pa5hN2dMD/gT7EP1sr+xLTIzfz/jM4ryPIt/ub20QHg1b3kZw5kP6A==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\isaac\\OneDrive\\Documents\\college\\sujet_speciaux\\DetectionLangue\\SujetTP2\\DetectionLangue.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\isaac\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

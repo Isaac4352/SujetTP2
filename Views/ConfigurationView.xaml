@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="DetectionLangue.Views.ConfigurationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DetectionLangue.Views"
+              xmlns:viewmodels="clr-namespace:DetectionLangue.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewmodels:DetectionLangueViewModel/>
+    </UserControl.DataContext>
+    <Grid Background="White" Height="450" Width="450" Margin="0,0,0,0" VerticalAlignment="Top">
+        <Label Content="Jeton: " Margin="154,45,90,379"/>
+        <!--donner lbl_langue-->
+        <TextBox Margin="214,45,90,379" Text="{Binding TmpToken}"/>
+
+        <Button Content="Sauver" Margin="35,412,247,10" Command="{Binding CmdSauvegarderToken}"/>
+        <Button Content="Annuler" Margin="225,412,57,10" Command="{Binding CmdAnnulerToken}"/>
+    </Grid>
+</UserControl>
