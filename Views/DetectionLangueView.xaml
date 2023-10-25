@@ -12,7 +12,6 @@
         <viewmodels:DetectionLangueViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
-        <converter:BoolToEstFiable x:Key="BoolToEstFiable"/>
         <converter:BoolToVisibility x:Key="BoolToVisibility"/>
     </UserControl.Resources>
     <Grid Background="WhiteSmoke">
@@ -25,16 +24,14 @@
         <Button Content="Détecter" Margin="33,391,423,26" Visibility="{Binding TexteExiste, Converter={StaticResource BoolToVisibility}}" Command="{Binding CmdDetecteurDetect}"/>
 
         <TextBlock Text="Résultat de la détection :" Margin="518,54,152,378" Height="NaN" Width="NaN"/>
-        <ComboBox Margin="492,123,125,297" Height="NaN" Width="NaN" SelectedItem="fr">
-            <ComboBoxItem Tag="1">fr</ComboBoxItem>
-            <ComboBoxItem Tag="2">en</ComboBoxItem>
-            <ComboBoxItem Tag="3">es</ComboBoxItem>
+        <ComboBox Margin="492,123,125,297" Height="NaN" Width="NaN" SelectedItem="{Binding SelectedDetection}" ItemsSource="{Binding Detections}" DisplayMemberPath="language">
+
         </ComboBox>
         <Label Content="Langue :" Target="{Binding ElementName=language}" Margin="518,183,217,231" Height="NaN" Width="NaN"/>
-        <TextBox Name="language" Margin="588,188,57,241" Height="NaN" Width="NaN" Text="{Binding Langue}"  IsReadOnly="True"/>
+        <TextBox Name="language" Margin="588,188,57,241" Height="NaN" Width="NaN" Text="{Binding SelectedDetection.language}"  IsReadOnly="True"/>
         <Label Content="Confiance :" Target="{Binding ElementName=Confiance}" Margin="510,261,217,153" Height="NaN" Width="NaN"/>
-        <TextBox Name="Confiance" Margin="583,268,63,160" Height="NaN" Width="NaN" Text="{Binding Confiance}"  IsReadOnly="True" TextChanged="Confiance_TextChanged"/>
+        <TextBox Name="Confiance" Margin="583,268,63,160" Height="NaN" Width="NaN" Text="{Binding SelectedDetection.confidence}"  IsReadOnly="True"/>
         <Label Content="Est fiable :" Target="{Binding ElementName=EstFiable}" Margin="510,334,217,80" Height="NaN" Width="NaN"/>
-        <TextBox Name="EstFiable" Margin="583,341,63,87" Height="NaN" Width="NaN" Text="{Binding EstFiable}"  IsReadOnly="True"/>
+        <TextBox Name="EstFiable" Margin="583,341,63,87" Height="NaN" Width="NaN" Text="{Binding SelectedDetection.isReliable}"  IsReadOnly="True"/>
     </Grid>
 </UserControl>

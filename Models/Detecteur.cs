@@ -24,13 +24,6 @@ namespace DetectionLangue.Models
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
         }
-
-
-        public async void detect()
-        {
-
-        }
-
         public async Task<string> RequeteGetAsync(string endpoint)
         {
             HttpResponseMessage hrm = await _httpClient.GetAsync(_urlBaseApi + endpoint);

@@ -18,67 +18,55 @@ using System.DirectoryServices.ActiveDirectory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
+using System.Collections.ObjectModel;
 
 namespace DetectionLangue.ViewModels
 {
     public class DetectionLangueViewModel : BaseViewModel
     {
         private Detecteur _detecteur;
+        public Detecteur Detecteur
+        {
+            get { return _detecteur; }
+            set { _detecteur = value; }
+        }
 
-        public Detection[] detections { get; set; }
+        private ObservableCollection<Detection> _detections;
 
-        public Detection selectedDetection { get; set; }
+        public ObservableCollection<Detection> Detections
+        {
+            get { return _detections; }
+            set { _detections = value; OnPropertyChanged(); }
+        }
+
+        private Detection _selectedDetection;
+
+        public Detection SelectedDetection {
+            get { return _selectedDetection; }
+            set {  _selectedDetection = value;
+                OnPropertyChanged();
+            }
+        }
 
         int count;
 
         private readonly static string URL_BASE_API = " https://ws.detectlanguage.com/0.2/detect";
-        public string Token = "b77c059e169d80f07e529ee6e53df079";
+        public string Token;
 
         private JsonSerializerSettings _jsonSettings;
 
-        public RelayCommand CmdProchainePhoto { get; private set; }
-
+        //Commandes
         public RelayCommand CmdGoToConfiguration { get; private set; }
         public RelayCommand CmdAnnulerToken { get; private set; }
         public RelayCommand CmdSauvegarderToken { get; private set; }
         public RelayCommand CmdDetecteurDetect { get; private set; }
 
+        //pour la page de configuration
         ConfigurationView configuration { get; set; }
         Window window;
-        //public string Token { get; private set; }   
         public string TmpToken { get; set; }
 
-        public string Langue { get; set; }
         private bool _enExecution;
-
-        //BoolToEstFiable convertBool;
-
-
-        private string _confiance;
-
-        public string Confiance
-        {
-            get { return _confiance; }
-            set {
-                _confiance = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _estFiable;
-        public string EstFiable { 
-            get { return _estFiable; }
-            set { 
-                _estFiable = value;
-                OnPropertyChanged(); 
-            }
-        }
-
-        public Detecteur Detecteur
-		{
-			get { return _detecteur; }
-			set { _detecteur = value; }
-		}
 
 
         private bool _texteExiste;
@@ -118,12 +106,13 @@ namespace DetectionLangue.ViewModels
             CmdAnnulerToken = new RelayCommand(annulerToken, null);
             CmdSauvegarderToken = new RelayCommand(sauvegarderToken, null);
             CmdDetecteurDetect = new RelayCommand(DetecteurDetect, null);
-            Detecteur = new Detecteur(URL_BASE_API);
-            Detecteur.SetHttpRequestHeader("x-api-key", Token);
-            detections = new Detection[10];
-            TexteExiste = false;
-            window = new Window();
 
+            Detecteur = new Detecteur(URL_BASE_API);
+            Detections = new ObservableCollection<Detection>();
+
+            TexteExiste = false;
+
+            window = new Window();
             _jsonSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -137,45 +126,29 @@ namespace DetectionLangue.ViewModels
             {
                 _enExecution = true;
 
-                
-                Console.WriteLine("inside prochaine photo");
-                Detecteur.SetHttpRequestHeader("Authorization", "Bearer " + Token);
                 string json = await Detecteur.RequeteGetAsync($"?q={DetectTexte}");
-
-             //   detections.
-
        
                 var data = JsonConvert.DeserializeObject<JObject>(json, _jsonSettings);
-                detections = new Detection[10];
-                count = 0;
-                foreach (var tmpDetection in data["data"]["detections"])
-                {
-                    if (tmpDetection["isReliable"] != null)
+                
+                //new observablecollection pour faire un reset du combobox
+                Detections = new ObservableCollection<Detection>();
+
+                if (data["error"] == null) {
+                    foreach (var tmpDetection in data["data"]["detections"])
                     {
-                        detections[count].isReliable = tmpDetection["isReliable"].ToString();
-                        detections[count].confidence = tmpDetection["confidence"].ToString();
-                        detections[count].language = tmpDetection["language"].ToString();
-                    }
-                    count++;
-                }
-                var detection = data["data"]["detections"][0];
-                EstFiable = detection["isReliable"].ToString();
-                Confiance = detection["confidence"].ToString();
-                //Console.WriteLine(data.detections);
-               // data.detections = JsonConvert.PopulateObject(json, data);F
-
-
-                /*        if (_indexActuel < _photos.Count)
+          
+                        if (tmpDetection["isReliable"] != null)
                         {
-                            string json = await _client.RequeteGetAsync($"/images/{_photos[_indexActuel].id}");
-                            Photo photo = JsonConvert.DeserializeObject<Photo>(json, _jsonSettings) ?? new Photo();
-
-                            UrlPhoto = photo.url;
-                            Races = "";
-                            if (photo.breeds != null) Races = string.Join(",", photo.breeds);
-                            _indexActuel++;
-                            NbPhotoAffichees++;
-                        }*/
+                            Detections.Add(new Detection(tmpDetection["language"].ToString(), tmpDetection["isReliable"].ToString(), tmpDetection["confidence"].ToString()));
+                        }
+                        count++;
+                    }
+                    SelectedDetection = Detections[0];
+                }
+                else
+                {
+                    MessageBox.Show("mauvais token");
+                }
             }
             catch (Exception ex) { }
             finally
@@ -190,6 +163,7 @@ namespace DetectionLangue.ViewModels
             window = new Window();
             configuration = new ConfigurationView();
             window.Content = configuration;
+            window.DataContext = this;
             window.Show();
         }
 
@@ -198,9 +172,6 @@ namespace DetectionLangue.ViewModels
             if(window != null)
             {
                 window.Close();
-                window.ShowDialog();
-               // window.Visibility = Visibility.Collapsed;
-
             }  
         }
 
@@ -209,16 +180,11 @@ namespace DetectionLangue.ViewModels
 
             if (window != null)
             {
-                Token = TmpToken;
-                window.Visibility = Visibility.Hidden;
                 window.Close();
+                Token = TmpToken;
+                Detecteur.SetHttpRequestHeader("Authorization", "Bearer " + Token);
             }
 
-        }
-
-        private void Detecter(object? obj)
-        {
-          
         }
     }
 }
